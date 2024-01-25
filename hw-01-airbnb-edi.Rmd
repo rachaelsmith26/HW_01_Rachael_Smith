@@ -110,7 +110,11 @@ You can find descriptions of each of the variables in the help file for the data
 ```
 
 3.  Create a faceted histogram where each facet represents a neighbourhood and displays the distribution of Airbnb prices in that neighbourhood. Think critically about whether it makes more sense to stack the facets on top of each other in a column, lay them out in a row, or wrap them around. Along with your visualisation, include your reasoning for the layout you chose for your facets.
-
+I chose this layout because you can clearly see each neighbourhood but you can also compare the pricing of each neighbourhood by one glance.
+ ggplot(data = edibnb, mapping = aes(x = price)) +
+    geom_histogram(binwidth = 0.2) +
+    facet_wrap(~neighbourhood)
+https://46033bcb378a4793bb2348ae39d48003.app.posit.cloud/graphics/4975e29d-6e1f-4493-8082-fefd795878d2.png
 ``` r
 ggplot(data = ___, mapping = aes(x = ___)) +
   geom_histogram(binwidth = ___) +
