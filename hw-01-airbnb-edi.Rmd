@@ -88,11 +88,13 @@ You can also find this information [here](https://rstudio-education.github.io/ds
 **Hint:** The Markdown Quick Reference sheet has an example of inline R code that might be helpful. You can access it from the Help menu in RStudio.
 ```
 
-1.  How many observations (rows) does the dataset have? Instead of hard coding the number in your answer, use inline code.
-There were 13,245 observations
+1.  How many observations (rows) does the dataset have?
+    Instead of hard coding the number in your answer, use inline code.
+    There were 13,245 observations
 
-3.  Run `View(edibnb)` in your Console to view the data in the data viewer. What does each row in the dataset represent?
-Each row represents the a house that is on the market.
+2.  Run `View(edibnb)` in your Console to view the data in the data viewer.
+    What does each row in the dataset represent?
+    Each row represents the an airbnb that is on the market.
 
 🧶 ✅ ⬆️ *Knit,* *commit, and push your changes to GitHub with an appropriate commit message. Make sure to commit and push all changed files so that your Git pane is cleared up afterwards.*
 
@@ -109,12 +111,8 @@ You can find descriptions of each of the variables in the help file for the data
 **Note:** The plot will give a warning about some observations with non-finite values for price being removed. Don't worry about the warning, it simply means that 199 listings in the data didn't have prices available, so they can't be plotted.
 ```
 
-3.  Create a faceted histogram where each facet represents a neighbourhood and displays the distribution of Airbnb prices in that neighbourhood. Think critically about whether it makes more sense to stack the facets on top of each other in a column, lay them out in a row, or wrap them around. Along with your visualisation, include your reasoning for the layout you chose for your facets.
-I chose this layout because you can clearly see each neighbourhood but you can also compare the pricing of each neighbourhood by one glance.
- ggplot(data = edibnb, mapping = aes(x = price)) +
-    geom_histogram(binwidth = 0.2) +
-    facet_wrap(~neighbourhood)
-https://46033bcb378a4793bb2348ae39d48003.app.posit.cloud/graphics/4975e29d-6e1f-4493-8082-fefd795878d2.png
+3.  Create a faceted histogram where each facet represents a neighbourhood and displays the distribution of Airbnb prices in that neighbourhood. Think critically about whether it makes more sense to stack the facets on top of each other in a column, lay them out in a row, or wrap them around. Along with your visualisation, include your reasoning for the layout you chose for your facets. I chose this layout because you can clearly see each neighbourhood but you can also compare the pricing of each neighbourhood by one glance. ggplot(data = edibnb, mapping = aes(x = price)) + geom_histogram(binwidth = 0.2) + facet_wrap(\~neighbourhood) <https://46033bcb378a4793bb2348ae39d48003.app.posit.cloud/graphics/4975e29d-6e1f-4493-8082-fefd795878d2.png>
+
 ``` r
 ggplot(data = ___, mapping = aes(x = ___)) +
   geom_histogram(binwidth = ___) +
@@ -130,8 +128,51 @@ Let's de-construct this code:
 
 🧶 ✅ ⬆️ Knit, *commit, and push your changes to GitHub with an appropriate commit message. Make sure to commit and push all changed files so that your Git pane is cleared up afterwards.*
 
-4.  Use a single pipeline to identity the neighbourhoods with the top five median listing prices. Then, in another pipeline filter the data for these five neighbourhoods and make ridge plots of the distributions of listing prices in these five neighbourhoods. In a third pipeline calculate the minimum, mean, median, standard deviation, IQR, and maximum listing price in each of these neighbourhoods. Use the visualisation and the summary statistics to describe the distribution of listing prices in the neighbourhoods. (Your answer will include three pipelines, one of which ends in a visualisation, and a narrative.)
-5.  Create a visualization that will help you compare the distribution of review scores (`review_scores_rating`) across neighbourhoods. You get to decide what type of visualisation to create and there is more than one correct answer! In your answer, include a brief interpretation of how Airbnb guests rate properties in general and how the neighbourhoods compare to each other in terms of their ratings.
+4.  Use a single pipeline to identity the neighbourhoods with the top five median listing prices. Then, in another pipeline filter the data for these five neighbourhoods and make ridge plots of the distributions of listing prices in these five neighbourhoods. In a third pipeline calculate the minimum, mean, median, standard deviation, IQR, and maximum listing price in each of these neighbourhoods. Use the visualisation and the summary statistics to describe the distribution of listing prices in the neighbourhoods. (Your answer will include three pipelines, one of which ends in a visualisation, and a narrative.) Pipeledibnb %\>% filter(neighbourhood %in% hoods) %\>% ggplot( aes(x = \_\_\_\_\_\_, y = \_\_\_\_\_\_\_, fill = \_\_\_\_\_\_\_\_)) + geom_density_ridges() ine 1 \> edibnb %\>%
+
+-   
+
+    ```         
+    group_by(neighbourhood) %>% 
+    ```
+
+-   
+
+    ```         
+    summarise(med_price = median(price), .groups = "drop") %>% 
+    ```
+
+-   
+
+    ```         
+    top_n(n = 5, med_price)
+    ```
+
+Pipe Line 2 \> edibnb %\>% + filter(neighbourhood %in% hoods) %\>% + ggplot( aes(x = neighbourhood, y = drops, fill = drops)) + + geom_density_ridges(alpha = 0.5)
+
+Pipe Line 3 edibnb %\>% filter(neighbourhood %in% hoods) %\>% group_by(neighbourhood) %\>% summarise( min = min(price, na.rm=T), median = median(price, na.rm=T), stand.dev = sd(price, na.rm=T), IQR = IQR(price, na.rm=T), max = max(price, na.rm=T)) neighbourhood min median stand.dev IQR max 1 Bruntsfield 10 80 90.2 72.5 900 2 New Town 12 100 109.
+86.5 999 3 Old Town 15 90 110.
+76 999 4 Stockbridge 21 85 77.6 66 750 5 West End 19 90 93.3 80 999\
+The top five neighborhoods had very similar numbers.
+However Stockbridge seemed to be the outlier in most of the categories of data.
+All the other data was with in 10 or for the max 100 of eachother if you take out the outliet of Stockbridge.
+
+5\.
+Create a visualization that will help you compare the distribution of review scores (`review_scores_rating`) across neighbourhoods.
+You get to decide what type of visualisation to create and there is more than one correct answer!
+In your answer, include a brief interpretation of how Airbnb guests rate properties in general and how the neighbourhoods compare to each other in terms of their ratings.
+
+Guests in general usually leave good reviews of the airbnb that they stayed in.
+All of th neighbourhoods seem to get very similar reviews besides a few outliers.
+
+```         
+ggplot(edibnb, aes(x = review_scores_rating, fill = neighbourhood)) +
++     geom_histogram(binwidth = 10, alpha = 0.5) +
++     labs(
++         x = "review_scores_rating",
++         y = "neighbourhood",
++         title = "Review Scores")
+```
 
 🧶 ✅ ⬆️ Knit, *commit, and push your changes to GitHub with an appropriate commit message. Make sure to commit and push all changed files so that your Git pane is cleared up afterwards and review the md document on GitHub to make sure you're happy with the final state of your work.*
 
